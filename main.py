@@ -19,9 +19,17 @@ for j in uzytkownicy['globalne']:
    pass
 
 def copy2_verbose(src, dst):
-    print('Kopiowanie pliku z {0} do {1}'.format(src,dst))
-    copy2(src,dst)
-    print('Skopiowano')
+    if src[-1] != dst [-1]:
+        print('Kopiowanie pliku z {0} do {1}'.format(src,dst))
+        copy2(src,dst)
+        print('Skopiowano')
+        os.system('cls')
+    else:
+        print('Aktualizowanie pliku {0}'.format(dst))
+        copy2(src,dst)
+        print('Zaktualizowano')
+        os.system('cls')
+
 
 def copytree(src, dst, symlinks=False, ignore=None):
    for item in os.listdir(src):
