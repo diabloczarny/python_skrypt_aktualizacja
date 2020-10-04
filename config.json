@@ -1,0 +1,32 @@
+{
+  "programy": [
+    "FFK",
+    "GM",
+    "KP"
+  ],
+  "globalne": [
+    {
+      "sciezka_do_FFK_aktualizacja": "H:/FFK",
+      "sciezka_do_FFK_globalna": "D:/FFK",
+      "sciezka_do_GM_aktualizacja": "D:/GM",
+      "sciezka_do_GM_globalna": "C:/GM",
+      "sciezka_do_KP_aktualizacja": "D:/KP",
+      "sciezka_do_KP_globalna": "C:/KP"
+    }
+  ],
+  "uzytkownicy": [
+    {
+      "uzytkownik": "ARTEK",
+      "adres_ip": "192.168.7.120",
+      "aktualizacja_FFK": 1,
+      "sciezka_do_FFK_lokalna": 0,
+      "data_ostatniej_aktualizacji_FFK": "04-10-2020",
+      "aktualizacja_GM": 0,
+      "sciezka_do_GM_lokalna": 0,
+      "data_ostatniej_aktualizacji_GM": "00-00-0000",
+      "aktualizacja_KP": 0,
+      "sciezka_do_KP_lokalna": 0,
+      "data_ostatniej_aktualizacji_KP": "00-00-0000"
+    }
+  ]
+}
