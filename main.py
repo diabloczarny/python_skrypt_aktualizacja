@@ -17,15 +17,6 @@ uzytkownicy = json.load(f)
 for j in uzytkownicy['globalne']:
    pass
 
-def calc_timing(original_function):
-    def new_function(*args,**kwargs):
-        start = datetime.datetime.now()
-        x = original_function(*args,**kwargs)
-        elapsed = datetime.datetime.now()
-        print("Elapsed Time = {0}".format(elapsed-start))
-        return x
-    return new_function()
-
 def copytree(src, dst, symlinks=False, ignore=None):
    for item in os.listdir(src):
        s = os.path.join(src, item)
