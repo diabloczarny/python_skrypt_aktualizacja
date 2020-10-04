@@ -69,7 +69,6 @@ def aktualizacja(program):
                os.mkdir(sciezka)
                copytree(sciezka_aktualizacja, sciezka)
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
-               #while toast.notification_active(): time.sleep(0.1)
                # ------------------------------------------------------------------------------------------------------------------------------------
                powiadomienie("Aktualizacja", 'Utworzono %s.' % (program))
 
@@ -83,8 +82,6 @@ def aktualizacja(program):
                copytree(sciezka + '_%s' % nazwa, sciezka)
                mergefolders(sciezka_aktualizacja, sciezka)
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
-
-
                # -------------------------------------------------------------------------------------------------------------------------------
                powiadomienie("Aktualizacja", 'Zaktualizowano %s.' % (program))
 
