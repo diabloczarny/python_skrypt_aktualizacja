@@ -6,6 +6,7 @@ from datetime import date
 import datetime
 import socket
 from win10toast import ToastNotifier
+from shutil import copytree,copy2
 
 host_name = socket.gethostname()
 host_ip = socket.gethostbyname(host_name)
@@ -17,14 +18,20 @@ uzytkownicy = json.load(f)
 for j in uzytkownicy['globalne']:
    pass
 
+def copy2_verbose(src, dst):
+    print('Kopiowanie pliku z {0} do {1}'.format(src,dst))
+    copy2(src,dst)
+    print('Skopiowano')
+
 def copytree(src, dst, symlinks=False, ignore=None):
    for item in os.listdir(src):
        s = os.path.join(src, item)
        d = os.path.join(dst, item)
        if os.path.isdir(s):
-           shutil.copytree(s, d, symlinks, ignore)
+           shutil.copytree(s, d, symlinks, ignore,copy_function=copy2_verbose)
        else:
-           shutil.copy2(s, d)
+#          shutil.copy2(s, d)
+           copy2_verbose(s,d)
 
 
 def mergefolders(root_src_dir, root_dst_dir):
@@ -37,7 +44,9 @@ def mergefolders(root_src_dir, root_dst_dir):
            dst_file = os.path.join(dst_dir, file_)
            if os.path.exists(dst_file):
                os.remove(dst_file)
-           shutil.copy(src_file, dst_dir)
+#           shutil.copy(src_file, dst_dir)
+           copy2_verbose(src_file, dst_dir)
+
 
 
 def powiadomienie(tytul, tresc):
@@ -68,6 +77,7 @@ def aktualizacja(program):
                # -------------------------------------------------------------------------------------------------------------------------------
                os.mkdir(sciezka)
                copytree(sciezka_aktualizacja, sciezka)
+               print("Utworzono wszystie pliki")
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
                # ------------------------------------------------------------------------------------------------------------------------------------
                powiadomienie("Aktualizacja", 'Utworzono %s.' % (program))
@@ -81,6 +91,7 @@ def aktualizacja(program):
                os.mkdir(sciezka)
                copytree(sciezka + '_%s' % nazwa, sciezka)
                mergefolders(sciezka_aktualizacja, sciezka)
+               print("Zaktualizowano wszystie pliki")
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
                # -------------------------------------------------------------------------------------------------------------------------------
                powiadomienie("Aktualizacja", 'Zaktualizowano %s.' % (program))
