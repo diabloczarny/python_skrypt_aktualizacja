@@ -75,7 +75,7 @@ def aktualizacja(program):
            else:  # aktualizuje program jeśli już istnieje
                powiadomienie("Aktualizacja", 'Rozpoczęto aktualizację %s. Proszę czekać...' % (program))
                # -------------------------------------------------------------------------------------------------------------------------------
-               if path.exists(sciezka + '_%s' % i["data_ostatniej_aktualizacji_%s" % program]):
+               if path.exists(sciezka + '_%s' % i["data_ostatniej_aktualizacji_%s" % program]): #usuwa poprzednią zapisaną kopię
                    shutil.rmtree(sciezka + '_%s' % i["data_ostatniej_aktualizacji_%s" % program])
                os.rename(sciezka, sciezka + '_%s' % nazwa)  # tworzenie kopii starszej wersji
                os.mkdir(sciezka)
