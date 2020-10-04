@@ -1,0 +1,1 @@
+# python_skrypt_aktualizacja
