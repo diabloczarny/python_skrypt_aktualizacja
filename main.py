@@ -6,9 +6,13 @@ from datetime import date
 import datetime
 import socket
 from win10toast import ToastNotifier
+from shutil import copytree,copy2
 
 host_name = socket.gethostname()
 host_ip = socket.gethostbyname(host_name)
+
+
+
 
 f = open('config.json', 'r+')
 
@@ -17,17 +21,35 @@ uzytkownicy = json.load(f)
 for j in uzytkownicy['globalne']:
    pass
 
-def copytree(src, dst, symlinks=False, ignore=None):
+temp = 0
+
+def copy2_verbose(src, dst, ilosc):
+    if src[-1] != dst [-1]:
+        #print('Kopiowanie pliku z {0} do {1}'.format(src,dst))
+        if copy2(src,dst):
+            temp=temp+1
+            print('Skopiowano %s/%s'%(temp,ilosc))
+            os.system('cls')
+    else:
+       # print('Aktualizowanie pliku {0}'.format(dst))
+        if copy2(src,dst):
+            temp=temp+1
+            print('Zaktualizowano %s/%s' % (temp, ilosc))
+            os.system('cls')
+
+
+def copytree(src, dst,ilosc, symlinks=False, ignore=None):
    for item in os.listdir(src):
        s = os.path.join(src, item)
        d = os.path.join(dst, item)
        if os.path.isdir(s):
-           shutil.copytree(s, d, symlinks, ignore)
+           shutil.copytree(s, d, symlinks, ignore,copy_function=copy2_verbose)
        else:
-           shutil.copy2(s, d)
+#          shutil.copy2(s, d)
+           copy2_verbose(s,d ,ilosc)
 
 
-def mergefolders(root_src_dir, root_dst_dir):
+def mergefolders(root_src_dir, root_dst_dir,ilosc):
    for src_dir, dirs, files in os.walk(root_src_dir):
        dst_dir = src_dir.replace(root_src_dir, root_dst_dir, 1)
        if not os.path.exists(dst_dir):
@@ -37,7 +59,9 @@ def mergefolders(root_src_dir, root_dst_dir):
            dst_file = os.path.join(dst_dir, file_)
            if os.path.exists(dst_file):
                os.remove(dst_file)
-           shutil.copy(src_file, dst_dir)
+#           shutil.copy(src_file, dst_dir)
+           copy2_verbose(src_file, dst_dir, ilosc)
+
 
 
 def powiadomienie(tytul, tresc):
@@ -56,7 +80,7 @@ def aktualizacja(program):
            sciezka_uzytkownika = i["sciezka_do_%s_lokalna" % program]
            sciezka_aktualizacja = j["sciezka_do_%s_aktualizacja" % program]
            sciezka = ''
-
+           folder_aktualizacji = sum([len(files) for r, d, files in os.walk(sciezka_aktualizacja)])
            if sciezka_uzytkownika == 0:  # jesli sciezka programu w uzytkowniku jest pusta czyli rowna 0 to uzywa sciezki globalnej
                sciezka = sciezka_globalna
            else:
@@ -64,10 +88,12 @@ def aktualizacja(program):
 
            if os.path.exists(
                    sciezka) != 1:  # tworzy katalog z programem jesli została zlecona aktualizacja a nie bylo programu
+
                powiadomienie("Aktualizacja", 'Rozpoczęto tworzenie %s. Proszę czekać...' % (program))
                # -------------------------------------------------------------------------------------------------------------------------------
                os.mkdir(sciezka)
-               copytree(sciezka_aktualizacja, sciezka)
+               copytree(sciezka_aktualizacja, sciezka,folder_aktualizacji)
+               print("Utworzono wszystie pliki")
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
                # ------------------------------------------------------------------------------------------------------------------------------------
                powiadomienie("Aktualizacja", 'Utworzono %s.' % (program))
@@ -75,12 +101,13 @@ def aktualizacja(program):
            else:  # aktualizuje program jeśli już istnieje
                powiadomienie("Aktualizacja", 'Rozpoczęto aktualizację %s. Proszę czekać...' % (program))
                # -------------------------------------------------------------------------------------------------------------------------------
-               if path.exists(sciezka + '_%s' % i["data_ostatniej_aktualizacji_%s" % program]):
+               if path.exists(sciezka + '_%s' % i["data_ostatniej_aktualizacji_%s" % program]): #usuwa poprzednią zapisaną kopię
                    shutil.rmtree(sciezka + '_%s' % i["data_ostatniej_aktualizacji_%s" % program])
                os.rename(sciezka, sciezka + '_%s' % nazwa)  # tworzenie kopii starszej wersji
                os.mkdir(sciezka)
-               copytree(sciezka + '_%s' % nazwa, sciezka)
-               mergefolders(sciezka_aktualizacja, sciezka)
+               copytree(sciezka + '_%s' % nazwa, sciezka,folder_aktualizacji)
+               mergefolders(sciezka_aktualizacja, sciezka,folder_aktualizacji)
+               print("Zaktualizowano wszystie pliki")
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
                # -------------------------------------------------------------------------------------------------------------------------------
                powiadomienie("Aktualizacja", 'Zaktualizowano %s.' % (program))
