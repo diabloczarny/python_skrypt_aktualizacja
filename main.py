@@ -21,29 +21,31 @@ uzytkownicy = json.load(f)
 for j in uzytkownicy['globalne']:
    pass
 
-temp = 0
+temp=0
 
 def copy2_verbose(src, dst, ilosc):
+    global temp
+    print('Kopiowanie pliku z {0} do {1}'.format(src, dst))
     if src[-1] != dst [-1]:
-        #print('Kopiowanie pliku z {0} do {1}'.format(src,dst))
+
         if copy2(src,dst):
             temp=temp+1
             print('Skopiowano %s/%s'%(temp,ilosc))
             os.system('cls')
     else:
-       # print('Aktualizowanie pliku {0}'.format(dst))
+        print('Aktualizowanie pliku {0}'.format(dst))
         if copy2(src,dst):
             temp=temp+1
             print('Zaktualizowano %s/%s' % (temp, ilosc))
             os.system('cls')
 
 
-def copytree(src, dst,ilosc, symlinks=False, ignore=None):
+def copytree(src, dst, ilosc, symlinks=False, ignore=None):
    for item in os.listdir(src):
        s = os.path.join(src, item)
        d = os.path.join(dst, item)
        if os.path.isdir(s):
-           shutil.copytree(s, d, symlinks, ignore,copy_function=copy2_verbose)
+           shutil.copytree(s, d, symlinks, ignore, copy_function=copy2_verbose(s,d,ilosc))
        else:
 #          shutil.copy2(s, d)
            copy2_verbose(s,d ,ilosc)
@@ -74,17 +76,21 @@ def aktualizacja(program):
    nazwa = date.today().strftime("%d-%m-%Y")
    if host_ip == i["adres_ip"]:  # identyfikacja hosta z plikiem konfiguracyjnym po adresie ip
 
-       if i[
-           "aktualizacja_%s" % program] == 1:  # sprawdzenie czy program ma sie zaktualizowac 1=tak !1=nie w pliku konfiguracyjnym
+       if i["aktualizacja_%s" % program] == 1:  # sprawdzenie czy program ma sie zaktualizowac 1=tak !1=nie w pliku konfiguracyjnym
            sciezka_globalna = j["sciezka_do_%s_globalna" % program]
            sciezka_uzytkownika = i["sciezka_do_%s_lokalna" % program]
            sciezka_aktualizacja = j["sciezka_do_%s_aktualizacja" % program]
            sciezka = ''
            folder_aktualizacji = sum([len(files) for r, d, files in os.walk(sciezka_aktualizacja)])
+
+
            if sciezka_uzytkownika == 0:  # jesli sciezka programu w uzytkowniku jest pusta czyli rowna 0 to uzywa sciezki globalnej
                sciezka = sciezka_globalna
            else:
                sciezka = sciezka_uzytkownika
+
+           sciezka_suma = sum([len(files) for r, d, files in os.walk(sciezka)])
+           print(sciezka_suma)
 
            if os.path.exists(
                    sciezka) != 1:  # tworzy katalog z programem jesli została zlecona aktualizacja a nie bylo programu
@@ -94,6 +100,7 @@ def aktualizacja(program):
                os.mkdir(sciezka)
                copytree(sciezka_aktualizacja, sciezka,folder_aktualizacji)
                print("Utworzono wszystie pliki")
+               temp=0
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
                # ------------------------------------------------------------------------------------------------------------------------------------
                powiadomienie("Aktualizacja", 'Utworzono %s.' % (program))
@@ -105,9 +112,10 @@ def aktualizacja(program):
                    shutil.rmtree(sciezka + '_%s' % i["data_ostatniej_aktualizacji_%s" % program])
                os.rename(sciezka, sciezka + '_%s' % nazwa)  # tworzenie kopii starszej wersji
                os.mkdir(sciezka)
-               copytree(sciezka + '_%s' % nazwa, sciezka,folder_aktualizacji)
-               mergefolders(sciezka_aktualizacja, sciezka,folder_aktualizacji)
+               copytree(sciezka + '_%s' % nazwa, sciezka,sciezka_suma)
+               mergefolders(sciezka_aktualizacja, sciezka,sciezka_suma)
                print("Zaktualizowano wszystie pliki")
+               temp=0
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
                # -------------------------------------------------------------------------------------------------------------------------------
                powiadomienie("Aktualizacja", 'Zaktualizowano %s.' % (program))
