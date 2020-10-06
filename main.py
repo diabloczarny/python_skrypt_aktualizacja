@@ -12,7 +12,7 @@ host_name = socket.gethostname()
 host_ip = socket.gethostbyname(host_name)
 
 
-
+temp = 0
 
 f = open('config.json', 'r+')
 
@@ -21,37 +21,34 @@ uzytkownicy = json.load(f)
 for j in uzytkownicy['globalne']:
    pass
 
-temp=0
 
-def copy2_verbose(src, dst, ilosc):
+
+def copy2_verbose(src, dst,ilosc=None):
     global temp
-    print('Kopiowanie pliku z {0} do {1}'.format(src, dst))
     if src[-1] != dst [-1]:
-
         if copy2(src,dst):
             temp=temp+1
-            print('Skopiowano %s/%s'%(temp,ilosc))
+            print('Skopiowano %s z %s plików'%(temp,ilosc))
             os.system('cls')
     else:
-        print('Aktualizowanie pliku {0}'.format(dst))
         if copy2(src,dst):
             temp=temp+1
-            print('Zaktualizowano %s/%s' % (temp, ilosc))
+            print('Zaktualizowano %s z %s plików' % (temp,ilosc))
             os.system('cls')
 
 
-def copytree(src, dst, ilosc, symlinks=False, ignore=None):
+def copytree(src, dst, symlinks=False, ignore=None,ilosc='brak'):
    for item in os.listdir(src):
        s = os.path.join(src, item)
        d = os.path.join(dst, item)
        if os.path.isdir(s):
-           shutil.copytree(s, d, symlinks, ignore, copy_function=copy2_verbose(s,d,ilosc))
+           shutil.copytree(s, d, symlinks, ignore, copy_function=copy2_verbose)
        else:
 #          shutil.copy2(s, d)
-           copy2_verbose(s,d ,ilosc)
+           copy2_verbose(s,d,ilosc)
 
 
-def mergefolders(root_src_dir, root_dst_dir,ilosc):
+def mergefolders(root_src_dir, root_dst_dir,ilosc=None):
    for src_dir, dirs, files in os.walk(root_src_dir):
        dst_dir = src_dir.replace(root_src_dir, root_dst_dir, 1)
        if not os.path.exists(dst_dir):
@@ -62,7 +59,7 @@ def mergefolders(root_src_dir, root_dst_dir,ilosc):
            if os.path.exists(dst_file):
                os.remove(dst_file)
 #           shutil.copy(src_file, dst_dir)
-           copy2_verbose(src_file, dst_dir, ilosc)
+           copy2_verbose(src_file, dst_dir,ilosc)
 
 
 
@@ -72,6 +69,7 @@ def powiadomienie(tytul, tresc):
 
 
 def aktualizacja(program):
+   temp = 0
    toast = ToastNotifier()
    nazwa = date.today().strftime("%d-%m-%Y")
    if host_ip == i["adres_ip"]:  # identyfikacja hosta z plikiem konfiguracyjnym po adresie ip
@@ -98,9 +96,10 @@ def aktualizacja(program):
                powiadomienie("Aktualizacja", 'Rozpoczęto tworzenie %s. Proszę czekać...' % (program))
                # -------------------------------------------------------------------------------------------------------------------------------
                os.mkdir(sciezka)
+               temp=0
                copytree(sciezka_aktualizacja, sciezka,folder_aktualizacji)
                print("Utworzono wszystie pliki")
-               temp=0
+
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
                # ------------------------------------------------------------------------------------------------------------------------------------
                powiadomienie("Aktualizacja", 'Utworzono %s.' % (program))
@@ -112,10 +111,12 @@ def aktualizacja(program):
                    shutil.rmtree(sciezka + '_%s' % i["data_ostatniej_aktualizacji_%s" % program])
                os.rename(sciezka, sciezka + '_%s' % nazwa)  # tworzenie kopii starszej wersji
                os.mkdir(sciezka)
+               temp = 0
                copytree(sciezka + '_%s' % nazwa, sciezka,sciezka_suma)
+               temp = 0
                mergefolders(sciezka_aktualizacja, sciezka,sciezka_suma)
                print("Zaktualizowano wszystie pliki")
-               temp=0
+
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
                # -------------------------------------------------------------------------------------------------------------------------------
                powiadomienie("Aktualizacja", 'Zaktualizowano %s.' % (program))
