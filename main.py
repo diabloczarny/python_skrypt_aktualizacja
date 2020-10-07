@@ -12,7 +12,10 @@ host_name = socket.gethostname()
 host_ip = socket.gethostbyname(host_name)
 
 
-temp = 0
+
+temp=0
+ilosc_lokalna = 0
+ilosc_aktualizacja = 0
 
 f = open('config.json', 'r+')
 
@@ -21,34 +24,34 @@ uzytkownicy = json.load(f)
 for j in uzytkownicy['globalne']:
    pass
 
-
-
-def copy2_verbose(src, dst,ilosc=None):
+def copy2_verbose(src, dst):
     global temp
-    if src[-1] != dst [-1]:
+    global ilosc_lokalna
+    global ilosc_aktualizacja
+    print(src,dst)
+    if src[-1] == dst [-1]:
         if copy2(src,dst):
             temp=temp+1
-            print('Skopiowano %s z %s plików'%(temp,ilosc))
-            os.system('cls')
+            print('Skopiowano %s z %s plików z '%(temp,ilosc_lokalna))
     else:
         if copy2(src,dst):
             temp=temp+1
-            print('Zaktualizowano %s z %s plików' % (temp,ilosc))
-            os.system('cls')
+            print('Zaktualizowano %s z %s plików'%(temp,ilosc_aktualizacja))
 
 
-def copytree(src, dst, symlinks=False, ignore=None,ilosc='brak'):
+
+def copytree(src, dst, symlinks=False, ignore=None):
    for item in os.listdir(src):
        s = os.path.join(src, item)
        d = os.path.join(dst, item)
        if os.path.isdir(s):
-           shutil.copytree(s, d, symlinks, ignore, copy_function=copy2_verbose)
+          shutil.copytree(s, d, symlinks, ignore, copy_function=copy2_verbose)
        else:
 #          shutil.copy2(s, d)
-           copy2_verbose(s,d,ilosc)
+           copy2_verbose(s,d,)
 
 
-def mergefolders(root_src_dir, root_dst_dir,ilosc=None):
+def mergefolders(root_src_dir, root_dst_dir):
    for src_dir, dirs, files in os.walk(root_src_dir):
        dst_dir = src_dir.replace(root_src_dir, root_dst_dir, 1)
        if not os.path.exists(dst_dir):
@@ -59,7 +62,7 @@ def mergefolders(root_src_dir, root_dst_dir,ilosc=None):
            if os.path.exists(dst_file):
                os.remove(dst_file)
 #           shutil.copy(src_file, dst_dir)
-           copy2_verbose(src_file, dst_dir,ilosc)
+           copy2_verbose(src_file, dst_dir)
 
 
 
@@ -69,7 +72,12 @@ def powiadomienie(tytul, tresc):
 
 
 def aktualizacja(program):
+
+   global temp
    temp = 0
+   global ilosc_aktualizacja
+   global ilosc_lokalna
+
    toast = ToastNotifier()
    nazwa = date.today().strftime("%d-%m-%Y")
    if host_ip == i["adres_ip"]:  # identyfikacja hosta z plikiem konfiguracyjnym po adresie ip
@@ -79,7 +87,7 @@ def aktualizacja(program):
            sciezka_uzytkownika = i["sciezka_do_%s_lokalna" % program]
            sciezka_aktualizacja = j["sciezka_do_%s_aktualizacja" % program]
            sciezka = ''
-           folder_aktualizacji = sum([len(files) for r, d, files in os.walk(sciezka_aktualizacja)])
+           ilosc_aktualizacja = sum([len(files) for r, d, files in os.walk(sciezka_aktualizacja)])
 
 
            if sciezka_uzytkownika == 0:  # jesli sciezka programu w uzytkowniku jest pusta czyli rowna 0 to uzywa sciezki globalnej
@@ -87,17 +95,13 @@ def aktualizacja(program):
            else:
                sciezka = sciezka_uzytkownika
 
-           sciezka_suma = sum([len(files) for r, d, files in os.walk(sciezka)])
-           print(sciezka_suma)
-
-           if os.path.exists(
-                   sciezka) != 1:  # tworzy katalog z programem jesli została zlecona aktualizacja a nie bylo programu
+           if os.path.exists(sciezka) != 1:  # tworzy katalog z programem jesli została zlecona aktualizacja a nie bylo programu
 
                powiadomienie("Aktualizacja", 'Rozpoczęto tworzenie %s. Proszę czekać...' % (program))
                # -------------------------------------------------------------------------------------------------------------------------------
                os.mkdir(sciezka)
-               temp=0
-               copytree(sciezka_aktualizacja, sciezka,folder_aktualizacji)
+               ilosc_lokalna = sum([len(files) for r, d, files in os.walk(sciezka_aktualizacja)])
+               copytree(sciezka_aktualizacja, sciezka)
                print("Utworzono wszystie pliki")
 
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
@@ -111,11 +115,13 @@ def aktualizacja(program):
                    shutil.rmtree(sciezka + '_%s' % i["data_ostatniej_aktualizacji_%s" % program])
                os.rename(sciezka, sciezka + '_%s' % nazwa)  # tworzenie kopii starszej wersji
                os.mkdir(sciezka)
-               temp = 0
-               copytree(sciezka + '_%s' % nazwa, sciezka,sciezka_suma)
-               temp = 0
-               mergefolders(sciezka_aktualizacja, sciezka,sciezka_suma)
-               print("Zaktualizowano wszystie pliki")
+
+               copytree(sciezka + '_%s' % nazwa, sciezka)
+               print("Skopiowano breakpoint")
+               temp=0
+               mergefolders(sciezka_aktualizacja, sciezka)
+               print("Przeniesiono breakpoint")
+               temp=0
 
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
                # -------------------------------------------------------------------------------------------------------------------------------
