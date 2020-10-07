@@ -28,11 +28,11 @@ def copy2_verbose(src, dst):
     global temp
     global ilosc_lokalna
     global ilosc_aktualizacja
-    print(src,dst)
+#    print(src,dst)
     if src[-1] == dst [-1]:
         if copy2(src,dst):
             temp=temp+1
-            print('Skopiowano %s z %s plików z '%(temp,ilosc_lokalna))
+            print('Utworzono kopię %s z %s plików'%(temp,ilosc_lokalna))
     else:
         if copy2(src,dst):
             temp=temp+1
@@ -94,15 +94,15 @@ def aktualizacja(program):
                sciezka = sciezka_globalna
            else:
                sciezka = sciezka_uzytkownika
-
+           ilosc_lokalna = sum([len(files) for r, d, files in os.walk(sciezka)])
            if os.path.exists(sciezka) != 1:  # tworzy katalog z programem jesli została zlecona aktualizacja a nie bylo programu
 
                powiadomienie("Aktualizacja", 'Rozpoczęto tworzenie %s. Proszę czekać...' % (program))
                # -------------------------------------------------------------------------------------------------------------------------------
                os.mkdir(sciezka)
-               ilosc_lokalna = sum([len(files) for r, d, files in os.walk(sciezka_aktualizacja)])
+
                copytree(sciezka_aktualizacja, sciezka)
-               print("Utworzono wszystie pliki")
+ #              print("Utworzono wszystie pliki")
 
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
                # ------------------------------------------------------------------------------------------------------------------------------------
@@ -117,10 +117,10 @@ def aktualizacja(program):
                os.mkdir(sciezka)
 
                copytree(sciezka + '_%s' % nazwa, sciezka)
-               print("Skopiowano breakpoint")
+#               print("Skopiowano breakpoint")
                temp=0
                mergefolders(sciezka_aktualizacja, sciezka)
-               print("Przeniesiono breakpoint")
+#               print("Przeniesiono breakpoint")
                temp=0
 
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
