@@ -11,8 +11,6 @@ from shutil import copytree,copy2
 host_name = socket.gethostname()
 host_ip = socket.gethostbyname(host_name)
 
-
-
 temp=0
 ilosc_lokalna = 0
 ilosc_aktualizacja = 0
@@ -24,19 +22,27 @@ uzytkownicy = json.load(f)
 for j in uzytkownicy['globalne']:
    pass
 
-def copy2_verbose(src, dst):
+def copy2_licznik(src, dst):
     global temp
+
     global ilosc_lokalna
+
     global ilosc_aktualizacja
-#    print(src,dst)
-    if src[-1] == dst [-1]:
+
+    if src[0] == dst[0] and src[-1] == dst [-1]:
         if copy2(src,dst):
             temp=temp+1
-            print('Utworzono kopię %s z %s plików'%(temp,ilosc_lokalna))
+            print('Utworzono kopię zapasową %s z %s plików'%(temp,ilosc_lokalna))
+
+    elif src[0] != dst[0] and src[-1] == dst [-1]:
+        if copy2(src,dst):
+            temp=temp+1
+            print('Utworzono %s z %s plików'%(temp,ilosc_aktualizacja))
     else:
         if copy2(src,dst):
             temp=temp+1
             print('Zaktualizowano %s z %s plików'%(temp,ilosc_aktualizacja))
+
 
 
 
@@ -45,10 +51,10 @@ def copytree(src, dst, symlinks=False, ignore=None):
        s = os.path.join(src, item)
        d = os.path.join(dst, item)
        if os.path.isdir(s):
-          shutil.copytree(s, d, symlinks, ignore, copy_function=copy2_verbose)
+          shutil.copytree(s, d, symlinks, ignore, copy_function=copy2_licznik)
        else:
 #          shutil.copy2(s, d)
-           copy2_verbose(s,d,)
+           copy2_licznik(s, d, )
 
 
 def mergefolders(root_src_dir, root_dst_dir):
@@ -62,14 +68,11 @@ def mergefolders(root_src_dir, root_dst_dir):
            if os.path.exists(dst_file):
                os.remove(dst_file)
 #           shutil.copy(src_file, dst_dir)
-           copy2_verbose(src_file, dst_dir)
-
-
+           copy2_licznik(src_file, dst_dir)
 
 def powiadomienie(tytul, tresc):
     toast = ToastNotifier()
     toast.show_toast(tytul, tresc, icon_path=None)
-
 
 def aktualizacja(program):
 
@@ -77,9 +80,8 @@ def aktualizacja(program):
    temp = 0
    global ilosc_aktualizacja
    global ilosc_lokalna
-
-   toast = ToastNotifier()
    nazwa = date.today().strftime("%d-%m-%Y")
+
    if host_ip == i["adres_ip"]:  # identyfikacja hosta z plikiem konfiguracyjnym po adresie ip
 
        if i["aktualizacja_%s" % program] == 1:  # sprawdzenie czy program ma sie zaktualizowac 1=tak !1=nie w pliku konfiguracyjnym
@@ -88,7 +90,6 @@ def aktualizacja(program):
            sciezka_aktualizacja = j["sciezka_do_%s_aktualizacja" % program]
            sciezka = ''
            ilosc_aktualizacja = sum([len(files) for r, d, files in os.walk(sciezka_aktualizacja)])
-
 
            if sciezka_uzytkownika == 0:  # jesli sciezka programu w uzytkowniku jest pusta czyli rowna 0 to uzywa sciezki globalnej
                sciezka = sciezka_globalna
@@ -99,10 +100,10 @@ def aktualizacja(program):
 
                powiadomienie("Aktualizacja", 'Rozpoczęto tworzenie %s. Proszę czekać...' % (program))
                # -------------------------------------------------------------------------------------------------------------------------------
-               os.mkdir(sciezka)
 
+               os.mkdir(sciezka)
                copytree(sciezka_aktualizacja, sciezka)
- #              print("Utworzono wszystie pliki")
+               print("Utworzono wszystie pliki")
 
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
                # ------------------------------------------------------------------------------------------------------------------------------------
@@ -117,17 +118,15 @@ def aktualizacja(program):
                os.mkdir(sciezka)
 
                copytree(sciezka + '_%s' % nazwa, sciezka)
-#               print("Skopiowano breakpoint")
+               print("Skopiowano breakpoint")
                temp=0
                mergefolders(sciezka_aktualizacja, sciezka)
-#               print("Przeniesiono breakpoint")
+               print("Przeniesiono breakpoint")
                temp=0
 
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
                # -------------------------------------------------------------------------------------------------------------------------------
                powiadomienie("Aktualizacja", 'Zaktualizowano %s.' % (program))
-
-
 
 for i in uzytkownicy['uzytkownicy']:
    for x in uzytkownicy['programy']:
@@ -139,4 +138,3 @@ for i in uzytkownicy['uzytkownicy']:
 f = open('config.json', 'w')
 json.dump(uzytkownicy, f, indent=2)
 f.close()
-
