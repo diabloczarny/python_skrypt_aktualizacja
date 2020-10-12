@@ -29,22 +29,22 @@ def copy2_licznik(src, dst):
 
     global ilosc_aktualizacja
 
-    if src[0] == dst[0] and src[-1] == dst [-1]:
+    if src[0] == dst[0] and src[-1] == dst[-1]:
         if copy2(src,dst):
             temp=temp+1
-            print('Utworzono kopię zapasową %s z %s plików'%(temp,ilosc_lokalna))
+            print('Kopia zapasowo %s z %s plików'%(temp,ilosc_lokalna))
 
-    elif src[0] != dst[0] and src[-1] == dst [-1]:
+    elif src[0] != dst[0] and src[-1] == dst[-1]:
         if copy2(src,dst):
             temp=temp+1
-            print('Utworzono %s z %s plików'%(temp,ilosc_aktualizacja))
-    else:
+            #print('SRC %s DST %s'%(src,dst))
+            print('Tworzenie %s z %s plików'%(temp,ilosc_aktualizacja))
+
+    elif src[0] != dst[0] and src[-1] != dst[-1] and len(src) > len(dst):
         if copy2(src,dst):
             temp=temp+1
-            print('Zaktualizowano %s z %s plików'%(temp,ilosc_aktualizacja))
-
-
-
+            #print('SRC %s DST %s'%(src,dst))
+            print('Aktualizowanie %s z %s plików'%(temp,ilosc_aktualizacja))
 
 def copytree(src, dst, symlinks=False, ignore=None):
    for item in os.listdir(src):
@@ -103,7 +103,7 @@ def aktualizacja(program):
 
                os.mkdir(sciezka)
                copytree(sciezka_aktualizacja, sciezka)
-               print("Utworzono wszystie pliki")
+               print("Utworzono breakpoint")
 
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
                # ------------------------------------------------------------------------------------------------------------------------------------
