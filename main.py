@@ -55,6 +55,41 @@ def copy2_licznik(src,dst):
         temp=temp+1
         print(f'{temp}/{ilosc}')
 
+def print_percent_done(index, total, bar_len=50, title='Please wait'):
+    '''
+    index is expected to be 0 based index.
+    0 <= index < total
+    '''
+    percent_done = (index+1)/total*100
+    percent_done = round(percent_done, 1)
+
+    done = round(percent_done/(100/bar_len))
+    togo = bar_len-done
+
+    done_str = '█'*int(done)
+    togo_str = '░'*int(togo)
+
+    print(f'\t⏳{title}: [{done_str}{togo_str}] {percent_done}% done', end='\r')
+
+    if round(percent_done) == 100:
+        print('\t✅')
+
+def progressBar(current, total, barLength = 50):
+    percent = float(current) * 100 / total
+    arrow   = '█' * int(percent/100 * barLength)
+    spaces  = '░' * (barLength - len(arrow))
+
+    print('Postęp: [%s%s] %d %%' % (arrow, spaces, percent), end='\r')
+
+def copy2_licznik(src,dst):
+    global temp
+    global ilosc
+
+    if copy2(src,dst):
+        temp=temp+1
+        #print_percent_done(temp,ilosc)
+        progressBar(temp,ilosc)
+
 def copytree(src, dst, symlinks=False, ignore=None):
    for item in os.listdir(src):
        s = os.path.join(src, item)
@@ -63,7 +98,7 @@ def copytree(src, dst, symlinks=False, ignore=None):
           shutil.copytree(s, d, symlinks, ignore, copy_function=copy2_licznik)
        else:
 #          shutil.copy2(s, d)
-           copy2_licznik(s, d, )
+           copy2_licznik(s, d)
 
 
 def mergefolders(root_src_dir, root_dst_dir):
@@ -110,11 +145,11 @@ def aktualizacja(program):
 
                powiadomienie("Aktualizacja", 'Rozpoczęto tworzenie %s. Proszę czekać...' % (program))
                # -------------------------------------------------------------------------------------------------------------------------------
-               print("Rozpoczeto tworzenie %s"%program )
+               print("⏳ Rozpoczeto tworzenie %s [1/1]"%program )
                os.mkdir(sciezka)
                ilosc=ilosc_aktualizacja
                copytree(sciezka_aktualizacja, sciezka)
-               print("Utworzono %s"%program)
+               print("\n✅ Utworzono %s"%program)
 
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
                # ------------------------------------------------------------------------------------------------------------------------------------
@@ -128,14 +163,14 @@ def aktualizacja(program):
                os.rename(sciezka, sciezka + '_%s' % nazwa)  # tworzenie kopii starszej wersji
                os.mkdir(sciezka)
                ilosc=ilosc_lokalna
-               print("Rozpoczeto tworzenie kopii zapasowej %s" % program)
+               print("⏳ Rozpoczęto tworzenie kopii zapasowej %s [1/2]" % program)
                copytree(sciezka + '_%s' % nazwa, sciezka)
-               print("Utworzono kopie zapasową")
+               print("\n✅ Utworzono kopię zapasową")
                temp=0
                ilosc=ilosc_aktualizacja
-               print("Rozpoczęto aktualizację")
+               print("⏳ Rozpoczęto aktualizację [2/2]")
                mergefolders(sciezka_aktualizacja, sciezka)
-               print("Zaktualizowano")
+               print("\n✅ Zaktualizowano")
                temp=0
 
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
