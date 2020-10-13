@@ -23,57 +23,6 @@ uzytkownicy = json.load(f)
 for j in uzytkownicy['globalne']:
    pass
 
-def copy2_licznik(src, dst):
-    global temp
-
-    global ilosc_lokalna
-
-    global ilosc_aktualizacja
-
-    if src[0] == dst[0] and src[-1] == dst[-1]:
-        if copy2(src,dst):
-            temp=temp+1
-            print('Kopia zapasowa %s z %s plików'%(temp,ilosc_lokalna))
-
-    elif src[0] != dst[0] and src[-1] == dst[-1]:
-        if copy2(src,dst):
-            temp=temp+1
-            #print('SRC %s DST %s'%(src,dst))
-            print('Tworzenie %s z %s plików'%(temp,ilosc_aktualizacja))
-
-    elif src[0] != dst[0] and src[-1] != dst[-1] and len(src) > len(dst):
-        if copy2(src,dst):
-            temp=temp+1
-            #print('SRC %s DST %s'%(src,dst))
-            print('Aktualizowanie %s z %s plików'%(temp,ilosc_aktualizacja))
-
-def copy2_licznik(src,dst):
-    global temp
-    global ilosc
-
-    if copy2(src,dst):
-        temp=temp+1
-        print(f'{temp}/{ilosc}')
-
-def print_percent_done(index, total, bar_len=50, title='Please wait'):
-    '''
-    index is expected to be 0 based index.
-    0 <= index < total
-    '''
-    percent_done = (index+1)/total*100
-    percent_done = round(percent_done, 1)
-
-    done = round(percent_done/(100/bar_len))
-    togo = bar_len-done
-
-    done_str = '█'*int(done)
-    togo_str = '░'*int(togo)
-
-    print(f'\t⏳{title}: [{done_str}{togo_str}] {percent_done}% done', end='\r')
-
-    if round(percent_done) == 100:
-        print('\t✅')
-
 def progressBar(current, total, barLength = 50):
     percent = float(current) * 100 / total
     arrow   = '█' * int(percent/100 * barLength)
@@ -84,7 +33,6 @@ def progressBar(current, total, barLength = 50):
 def copy2_licznik(src,dst):
     global temp
     global ilosc
-
     if copy2(src,dst):
         temp=temp+1
         #print_percent_done(temp,ilosc)
@@ -99,7 +47,6 @@ def copytree(src, dst, symlinks=False, ignore=None):
        else:
 #          shutil.copy2(s, d)
            copy2_licznik(s, d)
-
 
 def mergefolders(root_src_dir, root_dst_dir):
    for src_dir, dirs, files in os.walk(root_src_dir):
@@ -180,6 +127,7 @@ def aktualizacja(program):
 for i in uzytkownicy['uzytkownicy']:
    for x in uzytkownicy['programy']:
        aktualizacja(x)
+print("Pomyślnie wykonano wszystkie operacje")
 
 # print(len(uzytkownicy['programy'][0].keys()))
 # print(uzytkownicy['programy'][0]['program_3'])
