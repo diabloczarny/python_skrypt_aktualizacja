@@ -112,12 +112,12 @@ def aktualizacja(program):
                ilosc=ilosc_lokalna
                print("⏳ Rozpoczęto tworzenie kopii zapasowej %s [1/2]" % program)
                copytree(sciezka + '_%s' % nazwa, sciezka)
-               print("\n✅ Utworzono kopię zapasową")
+               print("\n✅ Utworzono kopię zapasową %s"%program)
                temp=0
                ilosc=ilosc_aktualizacja
-               print("⏳ Rozpoczęto aktualizację [2/2]")
+               print("⏳ Rozpoczęto aktualizację %s [2/2]"%program)
                mergefolders(sciezka_aktualizacja, sciezka)
-               print("\n✅ Zaktualizowano")
+               print("\n✅ Zaktualizowano %s"%program)
                temp=0
 
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
