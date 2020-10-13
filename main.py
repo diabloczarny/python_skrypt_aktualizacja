@@ -3,15 +3,16 @@ import os
 import shutil
 from os import path
 from datetime import date
-import datetime
 import socket
 from win10toast import ToastNotifier
 from shutil import copytree,copy2
+import sys
 
 host_name = socket.gethostname()
 host_ip = socket.gethostbyname(host_name)
 
 temp=0
+
 ilosc_lokalna = 0
 ilosc_aktualizacja = 0
 
@@ -32,7 +33,7 @@ def copy2_licznik(src, dst):
     if src[0] == dst[0] and src[-1] == dst[-1]:
         if copy2(src,dst):
             temp=temp+1
-            print('Kopia zapasowo %s z %s plików'%(temp,ilosc_lokalna))
+            print('Kopia zapasowa %s z %s plików'%(temp,ilosc_lokalna))
 
     elif src[0] != dst[0] and src[-1] == dst[-1]:
         if copy2(src,dst):
@@ -45,6 +46,14 @@ def copy2_licznik(src, dst):
             temp=temp+1
             #print('SRC %s DST %s'%(src,dst))
             print('Aktualizowanie %s z %s plików'%(temp,ilosc_aktualizacja))
+
+def copy2_licznik(src,dst):
+    global temp
+    global ilosc
+
+    if copy2(src,dst):
+        temp=temp+1
+        print(f'{temp}/{ilosc}')
 
 def copytree(src, dst, symlinks=False, ignore=None):
    for item in os.listdir(src):
@@ -80,6 +89,7 @@ def aktualizacja(program):
    temp = 0
    global ilosc_aktualizacja
    global ilosc_lokalna
+   global ilosc
    nazwa = date.today().strftime("%d-%m-%Y")
 
    if host_ip == i["adres_ip"]:  # identyfikacja hosta z plikiem konfiguracyjnym po adresie ip
@@ -100,10 +110,11 @@ def aktualizacja(program):
 
                powiadomienie("Aktualizacja", 'Rozpoczęto tworzenie %s. Proszę czekać...' % (program))
                # -------------------------------------------------------------------------------------------------------------------------------
-
+               print("Rozpoczeto tworzenie %s"%program )
                os.mkdir(sciezka)
+               ilosc=ilosc_aktualizacja
                copytree(sciezka_aktualizacja, sciezka)
-               print("Utworzono breakpoint")
+               print("Utworzono %s"%program)
 
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
                # ------------------------------------------------------------------------------------------------------------------------------------
@@ -116,12 +127,15 @@ def aktualizacja(program):
                    shutil.rmtree(sciezka + '_%s' % i["data_ostatniej_aktualizacji_%s" % program])
                os.rename(sciezka, sciezka + '_%s' % nazwa)  # tworzenie kopii starszej wersji
                os.mkdir(sciezka)
-
+               ilosc=ilosc_lokalna
+               print("Rozpoczeto tworzenie kopii zapasowej %s" % program)
                copytree(sciezka + '_%s' % nazwa, sciezka)
-               print("Skopiowano breakpoint")
+               print("Utworzono kopie zapasową")
                temp=0
+               ilosc=ilosc_aktualizacja
+               print("Rozpoczęto aktualizację")
                mergefolders(sciezka_aktualizacja, sciezka)
-               print("Przeniesiono breakpoint")
+               print("Zaktualizowano")
                temp=0
 
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
