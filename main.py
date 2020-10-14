@@ -20,7 +20,6 @@ ilosc_aktualizacja = 0
 
 f = open('config.json', 'r+')
 
-
 uzytkownicy = json.load(f)
 
 for j in uzytkownicy['globalne']:
@@ -28,18 +27,27 @@ for j in uzytkownicy['globalne']:
 
 for k in uzytkownicy['uzytkownicy']:
     pass
-
 logi = open(k["sciezka_do_logow"],"a")
 
-ini=open(k["sciezka_do_ini"],"w+")
-
+ini=open(k["sciezka_do_ini"],"a")
 if os.stat(k["sciezka_do_ini"]).st_size == 0:
    zawartosc="[KOPIAZAPASOWA]\n"
    for x in uzytkownicy['programy']:
        zawartosc=zawartosc+"DataOstatniejKopiiZapasowej%s = 00-00-0000"%x+"\n"
    ini.write(zawartosc)
+else:
+    for x in uzytkownicy["programy"]:
+        ini = open(k["sciezka_do_ini"], "r")
+        if not x in ini.read():
+            ini = open(k["sciezka_do_ini"], "a")
+            ini.write("DataOstatniejKopiiZapasowej%s = 00-00-0000"%x+"\n")
 
 ini.close()
+
+config = configparser.ConfigParser()
+config.read(k["sciezka_do_ini"])
+
+
 def progressBar(current, total, barLength = 50):
     percent = float(current) * 100 / total
     arrow   = '█' * int(percent/100 * barLength)
@@ -119,7 +127,6 @@ def aktualizacja(program):
                godzina = czas.strftime("%H:%M:%S")
                logi.write("Data utworzenia %s: " % program + nazwa + " " + godzina +"\n")
 
-               i["data_ostatniej_aktualizacji_%s" % program] = nazwa
                # ------------------------------------------------------------------------------------------------------------------------------------
                powiadomienie("Aktualizacja", 'Utworzono %s.' % (program))
 
@@ -146,15 +153,16 @@ def aktualizacja(program):
                godzina = czas.strftime("%H:%M:%S")
                logi.write("Data aktualizacji %s: " % program + nazwa + " " + godzina +"\n")
 
-               i["data_ostatniej_aktualizacji_%s" % program] = nazwa
+               #if not os.path.exists(sciezka[0, 3]+'logi.txt'):
                # -------------------------------------------------------------------------------------------------------------------------------
                powiadomienie("Aktualizacja", 'Zaktualizowano %s.' % (program))
-
-
+           i["data_ostatniej_aktualizacji_%s" % program] = nazwa
+           config['KOPIAZAPASOWA']['DataOstatniejKopiiZapasowej%s'%program] = nazwa
 
 for i in uzytkownicy['uzytkownicy']:
    for x in uzytkownicy['programy']:
        aktualizacja(x)
+
 print("Pomyślnie wykonano wszystkie operacje")
 
 # print(len(uzytkownicy['programy'][0].keys()))
