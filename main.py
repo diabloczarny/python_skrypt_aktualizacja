@@ -31,7 +31,15 @@ for k in uzytkownicy['uzytkownicy']:
 
 logi = open(k["sciezka_do_logow"],"a")
 
+ini=open(k["sciezka_do_ini"],"w+")
 
+if os.stat(k["sciezka_do_ini"]).st_size == 0:
+   zawartosc="[KOPIAZAPASOWA]\n"
+   for x in uzytkownicy['programy']:
+       zawartosc=zawartosc+"DataOstatniejKopiiZapasowej%s = 00-00-0000"%x+"\n"
+   ini.write(zawartosc)
+
+ini.close()
 def progressBar(current, total, barLength = 50):
     percent = float(current) * 100 / total
     arrow   = '█' * int(percent/100 * barLength)
