@@ -3,10 +3,12 @@ import os
 import shutil
 from os import path
 from datetime import date
+from datetime import datetime
 import socket
 from win10toast import ToastNotifier
 from shutil import copytree,copy2
 import sys
+import configparser
 
 host_name = socket.gethostname()
 host_ip = socket.gethostbyname(host_name)
@@ -18,10 +20,17 @@ ilosc_aktualizacja = 0
 
 f = open('config.json', 'r+')
 
+
 uzytkownicy = json.load(f)
 
 for j in uzytkownicy['globalne']:
    pass
+
+for k in uzytkownicy['uzytkownicy']:
+    pass
+
+logi = open(k["sciezka_do_logow"],"a")
+
 
 def progressBar(current, total, barLength = 50):
     percent = float(current) * 100 / total
@@ -98,6 +107,10 @@ def aktualizacja(program):
                copytree(sciezka_aktualizacja, sciezka)
                print("\n✅ Utworzono %s"%program)
 
+               czas = datetime.now()
+               godzina = czas.strftime("%H:%M:%S")
+               logi.write("Data utworzenia %s: " % program + nazwa + " " + godzina +"\n")
+
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
                # ------------------------------------------------------------------------------------------------------------------------------------
                powiadomienie("Aktualizacja", 'Utworzono %s.' % (program))
@@ -117,12 +130,19 @@ def aktualizacja(program):
                ilosc=ilosc_aktualizacja
                print("⏳ Rozpoczęto aktualizację %s [2/2]"%program)
                mergefolders(sciezka_aktualizacja, sciezka)
+
                print("\n✅ Zaktualizowano %s"%program)
                temp=0
+
+               czas = datetime.now()
+               godzina = czas.strftime("%H:%M:%S")
+               logi.write("Data aktualizacji %s: " % program + nazwa + " " + godzina +"\n")
 
                i["data_ostatniej_aktualizacji_%s" % program] = nazwa
                # -------------------------------------------------------------------------------------------------------------------------------
                powiadomienie("Aktualizacja", 'Zaktualizowano %s.' % (program))
+
+
 
 for i in uzytkownicy['uzytkownicy']:
    for x in uzytkownicy['programy']:
@@ -135,3 +155,5 @@ print("Pomyślnie wykonano wszystkie operacje")
 f = open('config.json', 'w')
 json.dump(uzytkownicy, f, indent=2)
 f.close()
+logi.write("---------------------------------------------------------------------------\n")
+logi.close()

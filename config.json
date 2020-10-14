@@ -20,13 +20,15 @@
       "adres_ip": "192.168.17.250",
       "aktualizacja_FKK": 1,
       "sciezka_do_FKK_lokalna": 0,
-      "data_ostatniej_aktualizacji_FKK": "13-10-2020",
-      "aktualizacja_GM": 0,
+      "data_ostatniej_aktualizacji_FKK": "14-10-2020",
+      "aktualizacja_GM": 1,
       "sciezka_do_GM_lokalna": 0,
-      "data_ostatniej_aktualizacji_GM": "00-00-0000",
+      "data_ostatniej_aktualizacji_GM": "14-10-2020",
       "aktualizacja_KP": 0,
       "sciezka_do_KP_lokalna": 0,
-      "data_ostatniej_aktualizacji_KP": "00-00-0000"
+      "data_ostatniej_aktualizacji_KP": "00-00-0000",
+      "sciezka_do_logow": "D:/192.168.17.250.txt",
+      "sciazka_do_ini": ""
     }
   ]
 }
