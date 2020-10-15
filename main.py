@@ -136,8 +136,8 @@ def aktualizacja(program):
            else:  # aktualizuje program jeśli już istnieje
                powiadomienie("Aktualizacja", 'Rozpoczęto aktualizację %s. Proszę czekać...' % (program))
                # -------------------------------------------------------------------------------------------------------------------------------
-               if path.exists(sciezka + '_%s' % i["data_ostatniej_aktualizacji_%s" % program]): #usuwa poprzednią zapisaną kopię
-                   shutil.rmtree(sciezka + '_%s' % i["data_ostatniej_aktualizacji_%s" % program])
+               if path.exists(sciezka + '_%s' % config.get('KOPIAZAPASOWA','data_ostatniej_kopii_zapasowej_%s'%program.lower())): #usuwa poprzednią zapisaną kopię
+                   shutil.rmtree(sciezka + '_%s' % config.get('KOPIAZAPASOWA','data_ostatniej_kopii_zapasowej_%s'%program.lower()))
                os.rename(sciezka, sciezka + '_%s' % nazwa)  # tworzenie kopii starszej wersji
                os.mkdir(sciezka)
                ilosc=ilosc_lokalna
@@ -159,7 +159,6 @@ def aktualizacja(program):
                #if not os.path.exists(sciezka[0, 3]+'logi.txt'):
                # -------------------------------------------------------------------------------------------------------------------------------
                powiadomienie("Aktualizacja", 'Zaktualizowano %s.' % (program))
-           i["data_ostatniej_aktualizacji_%s" % program] = nazwa
            #config['KOPIAZAPASOWA']['DataOstatniejKopiiZapasowej%s'%program] = nazwa
            config.set('KOPIAZAPASOWA',f'data_ostatniej_kopii_zapasowej_{program.lower()}',nazwa)
            with open(k["sciezka_do_ini"],'w') as configfile:
@@ -172,11 +171,5 @@ for i in uzytkownicy['uzytkownicy']:
 
 print("Pomyślnie wykonano wszystkie operacje")
 
-# print(len(uzytkownicy['programy'][0].keys()))
-# print(uzytkownicy['programy'][0]['program_3'])
-
-f = open('config.json', 'w')
-json.dump(uzytkownicy, f, indent=2)
-f.close()
 logi.write("---------------------------------------------------------------------------\n")
 logi.close()
