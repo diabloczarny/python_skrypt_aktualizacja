@@ -5,7 +5,7 @@ from os import path
 from datetime import date
 from datetime import datetime
 import socket
-from win10toast import ToastNotifier
+#from win10toast import ToastNotifier
 from shutil import copytree,copy2
 import sys
 import configparser
@@ -14,11 +14,10 @@ host_name = socket.gethostname()
 host_ip = socket.gethostbyname(host_name)
 
 temp=0
-
 ilosc_lokalna = 0
 ilosc_aktualizacja = 0
 
-f = open('config.json', 'r+')
+f = open('./config.json', 'r+')
 
 uzytkownicy = json.load(f)
 
@@ -27,6 +26,10 @@ for j in uzytkownicy['globalne']:
 
 for k in uzytkownicy['uzytkownicy']:
     pass
+
+if not os.path.isfile(k['sciezka_do_logow']):
+    logi = open(k["sciezka_do_logow"], "w")
+
 logi = open(k["sciezka_do_logow"],"a")
 
 if not os.path.isfile(k['sciezka_do_ini']):
@@ -89,9 +92,9 @@ def mergefolders(root_src_dir, root_dst_dir):
 #           shutil.copy(src_file, dst_dir)
            copy2_licznik(src_file, dst_dir)
 
-def powiadomienie(tytul, tresc):
-    toast = ToastNotifier()
-    toast.show_toast(tytul, tresc, icon_path=None)
+#def powiadomienie(tytul, tresc):
+#    toast = ToastNotifier()
+#    toast.show_toast(tytul, tresc, icon_path=None)
 
 def aktualizacja(program):
 
@@ -118,7 +121,7 @@ def aktualizacja(program):
            ilosc_lokalna = sum([len(files) for r, d, files in os.walk(sciezka)])
            if os.path.exists(sciezka) != 1:  # tworzy katalog z programem jesli została zlecona aktualizacja a nie bylo programu
 
-               powiadomienie("Aktualizacja", 'Rozpoczęto tworzenie %s. Proszę czekać...' % (program))
+#               powiadomienie("Aktualizacja", 'Rozpoczęto tworzenie %s. Proszę czekać...' % (program))
                # -------------------------------------------------------------------------------------------------------------------------------
                print("⏳ Rozpoczeto tworzenie %s [1/1]"%program )
                os.mkdir(sciezka)
@@ -131,10 +134,10 @@ def aktualizacja(program):
                logi.write("Data utworzenia %s: " % program + nazwa + " " + godzina +"\n")
 
                # ------------------------------------------------------------------------------------------------------------------------------------
-               powiadomienie("Aktualizacja", 'Utworzono %s.' % (program))
+#               powiadomienie("Aktualizacja", 'Utworzono %s.' % (program))
 
            else:  # aktualizuje program jeśli już istnieje
-               powiadomienie("Aktualizacja", 'Rozpoczęto aktualizację %s. Proszę czekać...' % (program))
+#               powiadomienie("Aktualizacja", 'Rozpoczęto aktualizację %s. Proszę czekać...' % (program))
                # -------------------------------------------------------------------------------------------------------------------------------
                if path.exists(sciezka + '_%s' % config.get('KOPIAZAPASOWA','data_ostatniej_kopii_zapasowej_%s'%program.lower())): #usuwa poprzednią zapisaną kopię
                    shutil.rmtree(sciezka + '_%s' % config.get('KOPIAZAPASOWA','data_ostatniej_kopii_zapasowej_%s'%program.lower()))
@@ -158,7 +161,7 @@ def aktualizacja(program):
 
                #if not os.path.exists(sciezka[0, 3]+'logi.txt'):
                # -------------------------------------------------------------------------------------------------------------------------------
-               powiadomienie("Aktualizacja", 'Zaktualizowano %s.' % (program))
+#               powiadomienie("Aktualizacja", 'Zaktualizowano %s.' % (program))
            #config['KOPIAZAPASOWA']['DataOstatniejKopiiZapasowej%s'%program] = nazwa
            config.set('KOPIAZAPASOWA',f'data_ostatniej_kopii_zapasowej_{program.lower()}',nazwa)
            with open(k["sciezka_do_ini"],'w') as configfile:
@@ -166,6 +169,9 @@ def aktualizacja(program):
            configfile.close()
 
 for i in uzytkownicy['uzytkownicy']:
+
+
+
    for x in uzytkownicy['programy']:
        aktualizacja(x)
 
