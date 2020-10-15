@@ -29,24 +29,27 @@ for k in uzytkownicy['uzytkownicy']:
     pass
 logi = open(k["sciezka_do_logow"],"a")
 
-ini=open(k["sciezka_do_ini"],"a")
+if not os.path.isfile(k['sciezka_do_ini']):
+    ini = open(k["sciezka_do_ini"], "w")
+
+ini=open(k["sciezka_do_ini"],"r")
 if os.stat(k["sciezka_do_ini"]).st_size == 0:
+   ini = open(k["sciezka_do_ini"], "w")
    zawartosc="[KOPIAZAPASOWA]\n"
    for x in uzytkownicy['programy']:
-       zawartosc=zawartosc+"DataOstatniejKopiiZapasowej%s = 00-00-0000"%x+"\n"
+       zawartosc=zawartosc+"data_ostatniej_kopii_zapasowej_%s = 00-00-0000"%x.lower()+"\n"
    ini.write(zawartosc)
 else:
     for x in uzytkownicy["programy"]:
         ini = open(k["sciezka_do_ini"], "r")
-        if not x in ini.read():
+        if not x.lower() in ini.read():
             ini = open(k["sciezka_do_ini"], "a")
-            ini.write("DataOstatniejKopiiZapasowej%s = 00-00-0000"%x+"\n")
+            ini.write("data_ostatniej_kopii_zapasowej_%s = 00-00-0000"%x.lower()+"\n")
 
 ini.close()
 
-config = configparser.ConfigParser()
+config = configparser.RawConfigParser()
 config.read(k["sciezka_do_ini"])
-
 
 def progressBar(current, total, barLength = 50):
     percent = float(current) * 100 / total
@@ -157,7 +160,11 @@ def aktualizacja(program):
                # -------------------------------------------------------------------------------------------------------------------------------
                powiadomienie("Aktualizacja", 'Zaktualizowano %s.' % (program))
            i["data_ostatniej_aktualizacji_%s" % program] = nazwa
-           config['KOPIAZAPASOWA']['DataOstatniejKopiiZapasowej%s'%program] = nazwa
+           #config['KOPIAZAPASOWA']['DataOstatniejKopiiZapasowej%s'%program] = nazwa
+           config.set('KOPIAZAPASOWA',f'data_ostatniej_kopii_zapasowej_{program.lower()}',nazwa)
+           with open(k["sciezka_do_ini"],'w') as configfile:
+               config.write(configfile)
+           configfile.close()
 
 for i in uzytkownicy['uzytkownicy']:
    for x in uzytkownicy['programy']:

@@ -6,8 +6,8 @@
   ],
   "globalne": [
     {
-      "sciezka_do_FKK_aktualizacja": "H:/FKK",
-      "sciezka_do_FKK_globalna": "D:/FKK",
+      "sciezka_do_FKK_aktualizacja": "D:/FKK",
+      "sciezka_do_FKK_globalna": "C:/FKK",
       "sciezka_do_GM_aktualizacja": "D:/GM",
       "sciezka_do_GM_globalna": "C:/GM",
       "sciezka_do_KP_aktualizacja": "D:/KP",
@@ -17,18 +17,18 @@
   "uzytkownicy": [
     {
       "uzytkownik": "ARTEK",
-      "adres_ip": "192.168.7.120",
+      "adres_ip": "192.168.17.250",
       "aktualizacja_FKK": 1,
       "sciezka_do_FKK_lokalna": 0,
-      "data_ostatniej_aktualizacji_FKK": "14-10-2020",
-      "aktualizacja_GM": 0,
+      "data_ostatniej_aktualizacji_FKK": "15-10-2020",
+      "aktualizacja_GM": 1,
       "sciezka_do_GM_lokalna": 0,
-      "data_ostatniej_aktualizacji_GM": "14-10-2020",
+      "data_ostatniej_aktualizacji_GM": "15-10-2020",
       "aktualizacja_KP": 0,
       "sciezka_do_KP_lokalna": 0,
       "data_ostatniej_aktualizacji_KP": "00-00-0000",
-      "sciezka_do_logow": "D:/192.168.7.120_logi.txt",
-      "sciezka_do_ini": "D:/192.168.7.120.ini"
+      "sciezka_do_logow": "D:/192.168.17.250_logi.txt",
+      "sciezka_do_ini": "D:/192.168.17.250.ini"
     }
   ]
 }
