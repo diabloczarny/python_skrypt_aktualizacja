@@ -17,7 +17,7 @@ temp=0
 ilosc_lokalna = 0
 ilosc_aktualizacja = 0
 
-f = open('./config.json', 'r+')
+f = open('./config.json', 'r')
 
 uzytkownicy = json.load(f)
 
@@ -25,34 +25,36 @@ for j in uzytkownicy['globalne']:
    pass
 
 for k in uzytkownicy['uzytkownicy']:
-    pass
+    if k["adres_ip"]==host_ip:
+        sciezka_do_logow=k["sciezka_do_logow"]
+        sciezka_do_ini=k["sciezka_do_ini"]
 
-if not os.path.isfile(k['sciezka_do_logow']):
-    logi = open(k["sciezka_do_logow"], "w")
+if not os.path.isfile(sciezka_do_logow):
+    logi = open(sciezka_do_logow, "w")
 
-logi = open(k["sciezka_do_logow"],"a")
+logi = open(sciezka_do_logow,"a")
 
-if not os.path.isfile(k['sciezka_do_ini']):
-    ini = open(k["sciezka_do_ini"], "w")
+if not os.path.isfile(sciezka_do_ini):
+    ini = open(sciezka_do_ini, "w")
 
-ini=open(k["sciezka_do_ini"],"r")
-if os.stat(k["sciezka_do_ini"]).st_size == 0:
-   ini = open(k["sciezka_do_ini"], "w")
+ini=open(sciezka_do_ini,"r")
+if os.stat(sciezka_do_ini).st_size == 0:
+   ini = open(sciezka_do_ini, "w")
    zawartosc="[KOPIAZAPASOWA]\n"
    for x in uzytkownicy['programy']:
        zawartosc=zawartosc+"data_ostatniej_kopii_zapasowej_%s = 00-00-0000"%x.lower()+"\n"
    ini.write(zawartosc)
 else:
     for x in uzytkownicy["programy"]:
-        ini = open(k["sciezka_do_ini"], "r")
+        ini = open(sciezka_do_ini, "r")
         if not x.lower() in ini.read():
-            ini = open(k["sciezka_do_ini"], "a")
+            ini = open(sciezka_do_ini, "a")
             ini.write("data_ostatniej_kopii_zapasowej_%s = 00-00-0000"%x.lower()+"\n")
 
 ini.close()
 
 config = configparser.RawConfigParser()
-config.read(k["sciezka_do_ini"])
+config.read(sciezka_do_ini)
 
 def progressBar(current, total, barLength = 50):
     percent = float(current) * 100 / total
@@ -159,21 +161,19 @@ def aktualizacja(program):
                godzina = czas.strftime("%H:%M:%S")
                logi.write("Data aktualizacji %s: " % program + nazwa + " " + godzina +"\n")
 
-               #if not os.path.exists(sciezka[0, 3]+'logi.txt'):
                # -------------------------------------------------------------------------------------------------------------------------------
 #               powiadomienie("Aktualizacja", 'Zaktualizowano %s.' % (program))
-           #config['KOPIAZAPASOWA']['DataOstatniejKopiiZapasowej%s'%program] = nazwa
            config.set('KOPIAZAPASOWA',f'data_ostatniej_kopii_zapasowej_{program.lower()}',nazwa)
-           with open(k["sciezka_do_ini"],'w') as configfile:
+           with open(sciezka_do_ini,'w') as configfile:
                config.write(configfile)
            configfile.close()
 
 for i in uzytkownicy['uzytkownicy']:
-
-
-
-   for x in uzytkownicy['programy']:
-       aktualizacja(x)
+    for x in uzytkownicy['programy']:
+        if str(list(i.keys())).find(x) > -1:
+            aktualizacja(x)
+#if x in i['aktualizacja_%s'%x]:
+ #   aktualizacja(x)
 
 print("Pomyślnie wykonano wszystkie operacje")
 
