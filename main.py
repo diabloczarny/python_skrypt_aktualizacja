@@ -63,6 +63,10 @@ def progressBar(current, total, barLength = 50):
 
     print('Postęp: [%s%s] %d %%' % (arrow, spaces, percent), end='\r')
 
+
+def now():
+    return datetime.now().strftime('%H:%M:%S')
+
 def copy2_licznik(src,dst):
     global temp
     global ilosc
@@ -70,9 +74,9 @@ def copy2_licznik(src,dst):
         temp=temp+1
         #print_percent_done(temp,ilosc)
         progressBar(temp,ilosc)
-        logi.write(f"Skopiowano z {src} do {dst}\n")
+        logi.write(f"[{now()}] Skopiowano z [{src}] do [{dst}]\n")
     else:
-        logi.write(f" Nie skopiowano z {src} do {dst}\n")
+        logi.write(f"[{now()}] Nie skopiowano z [{src}] do [{dst}]\n")
 
 
 def copytree(src, dst, symlinks=False, ignore=None):
@@ -131,7 +135,7 @@ def aktualizacja(program):
 #               powiadomienie("Aktualizacja", 'Rozpoczęto tworzenie %s. Proszę czekać...' % (program))
                # -------------------------------------------------------------------------------------------------------------------------------
                print("⏳ Rozpoczeto tworzenie %s [1/1]"%program)
-               logi.write("Rozpoczęto tworzenie %s\n"%program)
+               logi.write(f"[{now()}] Rozpoczęto tworzenie %s\n"%program)
                os.mkdir(sciezka)
                ilosc=ilosc_aktualizacja
                copytree(sciezka_aktualizacja, sciezka)
@@ -139,7 +143,7 @@ def aktualizacja(program):
 
                czas = datetime.now()
                godzina = czas.strftime("%H:%M:%S")
-               logi.write("Data utworzenia %s: " % program + nazwa + " " + godzina +"\n")
+               logi.write(f"[{now()}] Data utworzenia %s: " % program + nazwa + " " + now() +"\n")
 
                # ------------------------------------------------------------------------------------------------------------------------------------
 #               powiadomienie("Aktualizacja", 'Utworzono %s.' % (program))
@@ -149,26 +153,27 @@ def aktualizacja(program):
                # -------------------------------------------------------------------------------------------------------------------------------
                if path.exists(sciezka + '_%s' % config.get('KOPIAZAPASOWA','data_ostatniej_kopii_zapasowej_%s'%program.lower())): #usuwa poprzednią zapisaną kopię
                    shutil.rmtree(sciezka + '_%s' % config.get('KOPIAZAPASOWA','data_ostatniej_kopii_zapasowej_%s'%program.lower()))
+                   #logi.write(f"[{now()}] Usunięto poprzenią kopię zapasową %s\n" %(program,sciezka))
                os.rename(sciezka, sciezka + '_%s' % nazwa)  # tworzenie kopii starszej wersji
                os.mkdir(sciezka)
                ilosc=ilosc_lokalna
                print("⏳ Rozpoczęto tworzenie kopii zapasowej %s [1/2]" % program)
-               logi.write("Rozpoczęto tworzenie kopii zapasowej %s\n"%program)
+               logi.write(f"[{now()}] Rozpoczęto tworzenie kopii zapasowej %s\n"%program)
                copytree(sciezka + '_%s' % nazwa, sciezka)
-               logi.write("Utworzono kopię zapasową %s\n" % program)
+               logi.write(f"[{now()}] Utworzono kopię zapasową %s\n" % program)
                print("\n✅ Utworzono kopię zapasową %s"%program)
                temp=0
                ilosc=ilosc_aktualizacja
                print("⏳ Rozpoczęto aktualizację %s [2/2]"%program)
-               logi.write("Rozpoczęto aktualizację %s\n" % program)
+               logi.write(f"[{now()}] Rozpoczęto aktualizację %s\n" % program)
                mergefolders(sciezka_aktualizacja, sciezka)
-               logi.write("Zaktualizowano %s\n" % program)
+               logi.write(f"[{now()}] Zaktualizowano %s\n" % program)
                print("\n✅ Zaktualizowano %s"%program)
                temp=0
 
                czas = datetime.now()
                godzina = czas.strftime("%H:%M:%S")
-               logi.write("Data aktualizacji %s: " % program + nazwa + " " + godzina +"\n")
+               logi.write(f"[{now()}] Data aktualizacji %s: " % program + nazwa + " " + now() +"\n")
 
                # -------------------------------------------------------------------------------------------------------------------------------
 #               powiadomienie("Aktualizacja", 'Zaktualizowano %s.' % (program))
@@ -186,5 +191,5 @@ for i in uzytkownicy['uzytkownicy']:
 
 print("Pomyślnie wykonano wszystkie operacje")
 
-logi.write("---------------------------------------------------------------------------\n")
+logi.write("[============================================================================================================]\n")
 logi.close()
