@@ -70,6 +70,10 @@ def copy2_licznik(src,dst):
         temp=temp+1
         #print_percent_done(temp,ilosc)
         progressBar(temp,ilosc)
+        logi.write(f"Skopiowano z {src} do {dst}\n")
+    else:
+        logi.write(f" Nie skopiowano z {src} do {dst}\n")
+
 
 def copytree(src, dst, symlinks=False, ignore=None):
    for item in os.listdir(src):
@@ -80,6 +84,7 @@ def copytree(src, dst, symlinks=False, ignore=None):
        else:
 #          shutil.copy2(s, d)
            copy2_licznik(s, d)
+
 
 def mergefolders(root_src_dir, root_dst_dir):
    for src_dir, dirs, files in os.walk(root_src_dir):
@@ -125,7 +130,8 @@ def aktualizacja(program):
 
 #               powiadomienie("Aktualizacja", 'Rozpoczęto tworzenie %s. Proszę czekać...' % (program))
                # -------------------------------------------------------------------------------------------------------------------------------
-               print("⏳ Rozpoczeto tworzenie %s [1/1]"%program )
+               print("⏳ Rozpoczeto tworzenie %s [1/1]"%program)
+               logi.write("Rozpoczęto tworzenie %s\n"%program)
                os.mkdir(sciezka)
                ilosc=ilosc_aktualizacja
                copytree(sciezka_aktualizacja, sciezka)
@@ -147,13 +153,16 @@ def aktualizacja(program):
                os.mkdir(sciezka)
                ilosc=ilosc_lokalna
                print("⏳ Rozpoczęto tworzenie kopii zapasowej %s [1/2]" % program)
+               logi.write("Rozpoczęto tworzenie kopii zapasowej %s\n"%program)
                copytree(sciezka + '_%s' % nazwa, sciezka)
+               logi.write("Utworzono kopię zapasową %s\n" % program)
                print("\n✅ Utworzono kopię zapasową %s"%program)
                temp=0
                ilosc=ilosc_aktualizacja
                print("⏳ Rozpoczęto aktualizację %s [2/2]"%program)
+               logi.write("Rozpoczęto aktualizację %s\n" % program)
                mergefolders(sciezka_aktualizacja, sciezka)
-
+               logi.write("Zaktualizowano %s\n" % program)
                print("\n✅ Zaktualizowano %s"%program)
                temp=0
 
