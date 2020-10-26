@@ -89,7 +89,6 @@ def copytree(src, dst, symlinks=False, ignore=None):
 #          shutil.copy2(s, d)
            copy2_licznik(s, d)
 
-
 def mergefolders(root_src_dir, root_dst_dir):
    for src_dir, dirs, files in os.walk(root_src_dir):
        dst_dir = src_dir.replace(root_src_dir, root_dst_dir, 1)
@@ -119,6 +118,7 @@ def aktualizacja(program):
    if host_ip == i["adres_ip"]:  # identyfikacja hosta z plikiem konfiguracyjnym po adresie ip
 
        if i["aktualizacja_%s" % program] == 1:  # sprawdzenie czy program ma sie zaktualizowac 1=tak !1=nie w pliku konfiguracyjnym
+
            sciezka_globalna = j["sciezka_do_%s_globalna" % program]
            sciezka_uzytkownika = i["sciezka_do_%s_lokalna" % program]
            sciezka_aktualizacja = j["sciezka_do_%s_aktualizacja" % program]
@@ -153,12 +153,12 @@ def aktualizacja(program):
                # -------------------------------------------------------------------------------------------------------------------------------
                if path.exists(sciezka + '_%s' % config.get('KOPIAZAPASOWA','data_ostatniej_kopii_zapasowej_%s'%program.lower())): #usuwa poprzednią zapisaną kopię
                    shutil.rmtree(sciezka + '_%s' % config.get('KOPIAZAPASOWA','data_ostatniej_kopii_zapasowej_%s'%program.lower()))
-                   #logi.write(f"[{now()}] Usunięto poprzenią kopię zapasową %s\n" %(program,sciezka))
+                   logi.write(f"[{now()}] Usunięto poprzednią kopię zapasową {program} plik: {program}_{config.get('KOPIAZAPASOWA','data_ostatniej_kopii_zapasowej_%s'%program.lower())}\n")
                os.rename(sciezka, sciezka + '_%s' % nazwa)  # tworzenie kopii starszej wersji
                os.mkdir(sciezka)
                ilosc=ilosc_lokalna
                print("⏳ Rozpoczęto tworzenie kopii zapasowej %s [1/2]" % program)
-               logi.write(f"[{now()}] Rozpoczęto tworzenie kopii zapasowej %s\n"%program)
+               logi.write(f"[{now()}] Rozpoczęto tworzenie aktualnej kopii zapasowej %s\n"%program)
                copytree(sciezka + '_%s' % nazwa, sciezka)
                logi.write(f"[{now()}] Utworzono kopię zapasową %s\n" % program)
                print("\n✅ Utworzono kopię zapasową %s"%program)
@@ -182,14 +182,14 @@ def aktualizacja(program):
                config.write(configfile)
            configfile.close()
 
+logi.write(f"[============================================{datetime.now().strftime('%d-%m-%Y')}============================================]\n")
+
 for i in uzytkownicy['uzytkownicy']:
     for x in uzytkownicy['programy']:
         if str(list(i.keys())).find(x) > -1:
             aktualizacja(x)
-#if x in i['aktualizacja_%s'%x]:
- #   aktualizacja(x)
 
 print("Pomyślnie wykonano wszystkie operacje")
 
-logi.write("[============================================================================================================]\n")
+logi.write(f"[============================================{datetime.now().strftime('%d-%m-%Y')}============================================]\n")
 logi.close()

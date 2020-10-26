@@ -8,9 +8,9 @@
   ],
   "globalne": [
     {
-      "sciezka_do_FKK_aktualizacja": "D:/FKK",
+      "sciezka_do_FKK_aktualizacja": "E:/FKK",
       "sciezka_do_FKK_globalna": "C:/FKK",
-      "sciezka_do_GM_aktualizacja": "D:/GM",
+      "sciezka_do_GM_aktualizacja": "E:/GM",
       "sciezka_do_GM_globalna": "C:/GM",
       "sciezka_do_KP_aktualizacja": "D:/KP",
       "sciezka_do_KP_globalna": "C:/KP",
@@ -44,8 +44,8 @@
       "sciezka_do_KP_lokalna": 0,
       "aktualizacja_DCIM": 0,
       "sciezka_do_DCIM_lokalna": 0,
-      "sciezka_do_logow": "D:/192.168.17.250_logi.txt",
-      "sciezka_do_ini": "D:/192.168.17.250.ini"
+      "sciezka_do_logow": "E:/192.168.17.250_logi.txt",
+      "sciezka_do_ini": "E:/192.168.17.250.ini"
     },
     {
       "uzytkownik": "ARTEK",
